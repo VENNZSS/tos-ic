@@ -71,7 +71,7 @@ defaults = {
     "last_compare": None,
     "last_meme": None,
     "input_mode": "Text",
-    "selected_model": "gemini-2.0-flash",
+    "selected_model": "gemini-2.5-flash",
 }
 for key, value in defaults.items():
     if key not in st.session_state:
@@ -84,7 +84,7 @@ def get_api_key():
     key = st.session_state.get("custom_api_key")
     if key:
         return key
-    
+
     # Attempt to get from st.secrets (handles local vs cloud gracefully)
     try:
         key = st.secrets.get("GEMINI_API_KEY")
@@ -92,7 +92,7 @@ def get_api_key():
             return key
     except Exception:
         pass
-        
+
     # Fallback to environment variable
     return os.getenv("GEMINI_API_KEY")
 
@@ -145,7 +145,7 @@ def extract_json(raw: str) -> dict:
     # Remove markdown code blocks aggressively
     cleaned = re.sub(r"```(?:json)?", "", raw, flags=re.IGNORECASE).strip()
     cleaned = cleaned.replace("```", "").strip()
-    
+
     try:
         return json.loads(cleaned)
     except json.JSONDecodeError:
@@ -379,9 +379,9 @@ SAVAGE MODE:
 """
     prompt = f"""
 You are TOS-IC, a ruthless consumer-rights AI that explains Terms of Service and Privacy Policies.
-Return ONLY valid JSON.
-No markdown.
-No commentary outside JSON.
+Return ONLY a single valid JSON object.
+Do NOT use markdown code blocks or backticks.
+Ensure all strings are properly terminated and escaped.
 {tone_rules}
 RULES:
 - ZERO legal jargon.
@@ -414,7 +414,8 @@ LEGAL TEXT:
                 contents=prompt,
                 config=types.GenerateContentConfig(
                     temperature=0.55 if savage else 0.25,
-                    max_output_tokens=2048,
+                    max_output_tokens=8192,
+                    response_mime_type="application/json",
                     http_options=types.HttpOptions(timeout=60000),
                 ),
             )
@@ -929,12 +930,12 @@ with st.sidebar:
         st.warning("⚠️ API Key not configured.")
     else:
         st.success("✅ API ready.")
-        available_models = ["gemini-2.0-flash", "gemini-2.0-flash-exp", "gemini-2.5-flash"]
+        available_models = ["gemini-2.5-flash"]
         st.session_state.selected_model = st.selectbox(
             "SELECT MODEL",
             options=available_models,
-            index=available_models.index(st.session_state.selected_model) if st.session_state.selected_model in available_models else 0,
-            help="Experimental versions only."
+            index=0,
+            help="Using prioritized Theta-class model."
         )
 
     # DEBUG: Help identify deployment key-loading issues
@@ -957,7 +958,7 @@ if nav == "🎯 ANALYZE":
         '<div class="page-sub">Drop in a Terms of Service, Privacy Policy, URL, or PDF. We translate corporate fog into actual consequences.</div>',
         unsafe_allow_html=True,
     )
-    
+
     # API Key Management (Always available as override)
     with st.expander("🔑 API Key Configuration", expanded=not get_api_key()):
         st.markdown("**User-Provided Key (Priority)**")
@@ -967,7 +968,7 @@ if nav == "🎯 ANALYZE":
             value=st.session_state.get("custom_api_key", ""),
             placeholder="Paste your personal AIza... key to override defaults",
             label_visibility="collapsed",
-            help="Your key will be used instead of the system default if provided."
+            help="Your key will be used instead of the system default if provided.",
         )
         if st.session_state.get("custom_api_key"):
             st.success("Using custom API key override.")
@@ -975,8 +976,11 @@ if nav == "🎯 ANALYZE":
             st.info("Using system default API key.")
         else:
             st.warning("No API key detected. Please provide one above or in secrets.")
-        
-        st.markdown('<div style="font-size:12px;color:#71717A;">Get a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#E11D48;">Google AI Studio</a></div>', unsafe_allow_html=True)
+
+        st.markdown(
+            '<div style="font-size:12px;color:#71717A;">Get a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#E11D48;">Google AI Studio</a></div>',
+            unsafe_allow_html=True,
+        )
     st.markdown('<div class="input-mode-card">', unsafe_allow_html=True)
     st.markdown(
         f'<div class="active-mode-chip">Current Input: {esc(st.session_state.input_mode)}</div>',
@@ -1052,7 +1056,7 @@ if nav == "🎯 ANALYZE":
         if st.session_state.input_mode == "Text":
             raw_text = raw_text_input.strip()
             # Company name will be extracted during analysis to save quota
-            company_meta["name"] = "Legal Document" 
+            company_meta["name"] = "Legal Document"
         elif st.session_state.input_mode == "URL":
             url_val = url_input.strip()
             if url_val:
@@ -1191,7 +1195,7 @@ elif nav == "⚔️ COMPARE":
                         else "Calculating threat delta..."
                     ):
                         resA = analyze_legal(textA, is_compare=True, savage=savage_mode)
-                        time.sleep(1) 
+                        time.sleep(1)
                         resB = analyze_legal(textB, is_compare=True, savage=savage_mode)
                     st.session_state.last_compare = {
                         "metaA": metaA,
