@@ -71,6 +71,7 @@ defaults = {
     "last_compare": None,
     "last_meme": None,
     "input_mode": "Text",
+    "selected_model": "gemini-2.0-flash",
 }
 for key, value in defaults.items():
     if key not in st.session_state:
@@ -79,11 +80,21 @@ for key, value in defaults.items():
 
 # Bulletproof Key Fetching
 def get_api_key():
-    return (
-        st.session_state.get("custom_api_key")
-        or st.secrets.get("GEMINI_API_KEY")
-        or os.getenv("GEMINI_API_KEY")
-    )
+    # Attempt to get from session state first (user input)
+    key = st.session_state.get("custom_api_key")
+    if key:
+        return key
+    
+    # Attempt to get from st.secrets (handles local vs cloud gracefully)
+    try:
+        key = st.secrets.get("GEMINI_API_KEY")
+        if key:
+            return key
+    except Exception:
+        pass
+        
+    # Fallback to environment variable
+    return os.getenv("GEMINI_API_KEY")
 
 
 def get_client():
@@ -94,7 +105,7 @@ def get_client():
         return None
 
     try:
-        # 2. Try the new SDK initialization
+        # 2. Try the new SDK initialization (default version)
         return genai.Client(api_key=key)
     except Exception as e:
         # 3. If it fails, show the EXACT error from Google
@@ -131,15 +142,22 @@ def esc(value) -> str:
 def extract_json(raw: str) -> dict:
     if not raw:
         raise ValueError("Empty model response.")
-    cleaned = raw.replace("```json", "").replace("```", "").strip()
+    # Remove markdown code blocks aggressively
+    cleaned = re.sub(r"```(?:json)?", "", raw, flags=re.IGNORECASE).strip()
+    cleaned = cleaned.replace("```", "").strip()
+    
     try:
         return json.loads(cleaned)
     except json.JSONDecodeError:
+        # Find the outermost curly braces
         start = cleaned.find("{")
         end = cleaned.rfind("}")
         if start != -1 and end != -1:
+            candidate = cleaned[start : end + 1]
             try:
-                return json.loads(cleaned[start : end + 1])
+                # Clean common LLM JSON mistakes (unescaped control chars)
+                candidate = re.sub(r"[\x00-\x1F]+", " ", candidate)
+                return json.loads(candidate)
             except Exception:
                 pass
         raise
@@ -236,7 +254,7 @@ def get_company_name_from_text(text: str) -> str:
         return "Unknown Company"
     try:
         res = c.models.generate_content(
-            model="gemini-1.5-flash",
+            model=st.session_state.selected_model,
             contents=f"Extract the company name from this text. Return ONLY the name (max 3 words). If unknown, return 'Unknown Company'.\n\nTEXT:\n{text[:2000]}",
             config=types.GenerateContentConfig(
                 http_options=types.HttpOptions(timeout=30000),
@@ -392,10 +410,9 @@ LEGAL TEXT:
     for attempt in range(3):
         try:
             res = c.models.generate_content(
-                model="gemini-1.5-flash",
+                model=st.session_state.selected_model,
                 contents=prompt,
                 config=types.GenerateContentConfig(
-                    response_mime_type="application/json",
                     temperature=0.55 if savage else 0.25,
                     max_output_tokens=2048,
                     http_options=types.HttpOptions(timeout=60000),
@@ -528,7 +545,7 @@ SVG starts with <svg and ends with </svg>
         if not c:
             raise RuntimeError("API Key missing.")
         res = c.models.generate_content(
-            model="gemini-1.5-flash",
+            model=st.session_state.selected_model,
             contents=prompt,
             config=types.GenerateContentConfig(
                 http_options=types.HttpOptions(timeout=60000),
@@ -912,11 +929,25 @@ with st.sidebar:
         st.warning("⚠️ API Key not configured.")
     else:
         st.success("✅ API ready.")
+        available_models = ["gemini-2.0-flash", "gemini-2.0-flash-exp", "gemini-2.5-flash"]
+        st.session_state.selected_model = st.selectbox(
+            "SELECT MODEL",
+            options=available_models,
+            index=available_models.index(st.session_state.selected_model) if st.session_state.selected_model in available_models else 0,
+            help="Experimental versions only."
+        )
 
     # DEBUG: Help identify deployment key-loading issues
     with st.expander("🛠️ Debug Info", expanded=False):
         st.write("DEBUG KEY:", bool(get_api_key()))
-        st.write("DEBUG CLIENT:", get_client() is not None)
+        c = get_client()
+        st.write("DEBUG CLIENT:", c is not None)
+        if c:
+            try:
+                models = [m.name for m in c.models.list()]
+                st.write("AVAILABLE MODELS:", models)
+            except Exception as e:
+                st.write("MODELS ERROR:", str(e))
 if nav == "🎯 ANALYZE":
     st.markdown(
         '<div class="page-title">Analysis <span>Engine</span></div>',
@@ -926,6 +957,26 @@ if nav == "🎯 ANALYZE":
         '<div class="page-sub">Drop in a Terms of Service, Privacy Policy, URL, or PDF. We translate corporate fog into actual consequences.</div>',
         unsafe_allow_html=True,
     )
+    
+    # API Key Management (Always available as override)
+    with st.expander("🔑 API Key Configuration", expanded=not get_api_key()):
+        st.markdown("**User-Provided Key (Priority)**")
+        st.session_state.custom_api_key = st.text_input(
+            "Custom Gemini API Key",
+            type="password",
+            value=st.session_state.get("custom_api_key", ""),
+            placeholder="Paste your personal AIza... key to override defaults",
+            label_visibility="collapsed",
+            help="Your key will be used instead of the system default if provided."
+        )
+        if st.session_state.get("custom_api_key"):
+            st.success("Using custom API key override.")
+        elif get_api_key():
+            st.info("Using system default API key.")
+        else:
+            st.warning("No API key detected. Please provide one above or in secrets.")
+        
+        st.markdown('<div style="font-size:12px;color:#71717A;">Get a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#E11D48;">Google AI Studio</a></div>', unsafe_allow_html=True)
     st.markdown('<div class="input-mode-card">', unsafe_allow_html=True)
     st.markdown(
         f'<div class="active-mode-chip">Current Input: {esc(st.session_state.input_mode)}</div>',
