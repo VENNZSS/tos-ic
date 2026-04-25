@@ -39,7 +39,7 @@ try:
     import cairosvg
 
     HAS_CAIROSVG = True
-except ImportError:
+except (ImportError, OSError):
     HAS_CAIROSVG = False
 
 load_dotenv()
