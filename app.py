@@ -12,34 +12,36 @@ import streamlit as st
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+
 load_dotenv()
 try:
     import pypdf
+
     HAS_PYPDF = True
 except ImportError:
     HAS_PYPDF = False
 try:
     from bs4 import BeautifulSoup
+
     HAS_BS4 = True
 except ImportError:
     HAS_BS4 = False
 try:
     from PIL import Image, ImageDraw, ImageFont
+
     HAS_PIL = True
 except ImportError:
     HAS_PIL = False
 try:
     import cairosvg
+
     HAS_CAIROSVG = True
 except (ImportError, OSError):
     HAS_CAIROSVG = False
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-if not GEMINI_API_KEY:
-    try:
-        GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
-    except Exception:
-        GEMINI_API_KEY = None
+# Key is now fetched dynamically via get_api_key() to ensure reliability on Streamlit Cloud
 HISTORY_FILE = "scan_history.json"
+
+
 def load_history():
     if os.path.exists(HISTORY_FILE):
         try:
@@ -48,12 +50,16 @@ def load_history():
         except Exception:
             return []
     return []
+
+
 def save_history(history):
     try:
         with open(HISTORY_FILE, "w") as f:
             json.dump(history[:20], f)
     except Exception:
         pass
+
+
 st.set_page_config(
     page_title="TOS-IC | Savage Legal Scanner",
     layout="wide",
@@ -69,13 +75,20 @@ defaults = {
 for key, value in defaults.items():
     if key not in st.session_state:
         st.session_state[key] = value
+
+
 def get_api_key():
-    return GEMINI_API_KEY
+    return st.secrets.get("GEMINI_API_KEY") or os.getenv("GEMINI_API_KEY")
+
+
 @st.cache_resource
 def get_client():
-    if not GEMINI_API_KEY:
+    api_key = get_api_key()
+    if not api_key:
         return None
-    return genai.Client(api_key=GEMINI_API_KEY)
+    return genai.Client(api_key=api_key)
+
+
 def check_rate_limit():
     if "request_times" not in st.session_state:
         st.session_state.request_times = []
@@ -87,11 +100,17 @@ def check_rate_limit():
         return False
     st.session_state.request_times.append(now)
     return True
+
+
 if os.path.exists("style.css"):
     with open("style.css") as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+
 def esc(value) -> str:
     return html.escape(str(value or ""))
+
+
 def extract_json(raw: str) -> dict:
     if not raw:
         raise ValueError("Empty model response.")
@@ -106,13 +125,16 @@ def extract_json(raw: str) -> dict:
                 return json.loads(cleaned[start : end + 1])
             except Exception:
                 pass
-        print(f"DEBUG: Failed to parse JSON. Raw: {raw[:200]}...")
         raise
+
+
 def normalize_url(url: str) -> str:
     url = url.strip()
     if url and not url.startswith(("http://", "https://")):
         url = "https://" + url
     return url
+
+
 @st.cache_data(ttl=3600, show_spinner=False)
 def extract_from_url(url: str) -> str:
     try:
@@ -141,13 +163,16 @@ def extract_from_url(url: str) -> str:
         text = re.sub(r"[ \t]{2,}", " ", text)
         result = text.strip()
         if not result or len(result) < 300:
-            st.warning("⚠️ Content too thin. The site might be blocking access or requires JavaScript.")
+            st.warning(
+                "⚠️ Content too thin. The site might be blocking access or requires JavaScript."
+            )
             return ""
         return result
     except Exception as e:
-        print(f"ERROR: Fetch failed for {url}: {e}")
         st.error(f"❌ Could not fetch URL: {e}")
         return ""
+
+
 def extract_from_pdf(uploaded_file) -> str:
     if uploaded_file.size > 5 * 1024 * 1024:
         st.error("❌ PDF too large (max 5MB)")
@@ -157,11 +182,14 @@ def extract_from_pdf(uploaded_file) -> str:
         return ""
     try:
         reader = pypdf.PdfReader(uploaded_file)
-        return "\n".join(page.extract_text() or "" for page in reader.pages[:30]).strip()
+        return "\n".join(
+            page.extract_text() or "" for page in reader.pages[:30]
+        ).strip()
     except Exception as e:
-        print(f"ERROR: PDF extraction failed: {e}")
         st.error(f"❌ Could not read PDF: {e}")
         return ""
+
+
 @st.cache_data(ttl=3600, show_spinner=False)
 def get_company_meta_from_url(url: str) -> dict:
     try:
@@ -182,6 +210,8 @@ def get_company_meta_from_url(url: str) -> dict:
         }
     except Exception:
         return {"name": "Unknown", "domain": "", "logo": ""}
+
+
 @st.cache_data(show_spinner=False)
 def get_company_name_from_text(text: str) -> str:
     c = get_client()
@@ -198,6 +228,8 @@ def get_company_name_from_text(text: str) -> str:
         return name
     except Exception:
         return "Unknown Company"
+
+
 def logo_img_tag(logo_url: str, css_class: str = "company-logo") -> str:
     if not logo_url:
         return ""
@@ -205,17 +237,23 @@ def logo_img_tag(logo_url: str, css_class: str = "company-logo") -> str:
         f'<img src="{esc(logo_url)}" class="{css_class}" '
         f"onerror=\"this.style.display='none'\">"
     )
+
+
 def safe_int(value, default: int = 0) -> int:
     try:
         return int(float(value))
     except Exception:
         return default
+
+
 def rating_from_score(score: int) -> str:
     if score >= 70:
         return "Critical"
     if score >= 35:
         return "Risky"
     return "Safe"
+
+
 def normalize_analysis(data: dict) -> dict:
     if not isinstance(data, dict):
         data = {}
@@ -246,6 +284,8 @@ def normalize_analysis(data: dict) -> dict:
         normalized_flags.append(flag)
     data["red_flags"] = normalized_flags
     return data
+
+
 def add_archive(entry: dict):
     new_data = entry.get("data", {})
     new_key = (
@@ -264,6 +304,8 @@ def add_archive(entry: dict):
             return
     st.session_state.archives.insert(0, entry)
     save_history(st.session_state.archives)
+
+
 def fun_stats(score: int) -> dict:
     score = safe_int(score)
     return {
@@ -273,11 +315,15 @@ def fun_stats(score: int) -> dict:
             "Turbo" if score >= 70 else ("Suspicious" if score >= 40 else "Low")
         ),
     }
+
+
 @st.cache_data(show_spinner=False)
 def analyze_legal(text: str, is_compare: bool = False, savage: bool = False) -> dict:
+    if not get_api_key():
+        raise RuntimeError("API Key missing. Configure it in Streamlit Secrets.")
     c = get_client()
     if not c:
-        raise RuntimeError("API Key missing. Add it to .env or the sidebar.")
+        raise RuntimeError("AI Client failed to initialize.")
     flag_format = '"red_flags": [{"title":"...","severity":"Critical|High Risk|Medium Risk","meaning":"...","worst_case":"...","savage_explanation":"..."}]'
     tone_rules = """
 NORMAL MODE:
@@ -338,6 +384,8 @@ LEGAL TEXT:
         raise ValueError("Empty response from AI")
     data = extract_json(res.text)
     return normalize_analysis(data)
+
+
 @st.cache_resource
 def get_font(size: int, bold: bool = False):
     if not HAS_PIL:
@@ -357,6 +405,8 @@ def get_font(size: int, bold: bool = False):
         except Exception:
             pass
     return ImageFont.load_default()
+
+
 def wrap_text(text: str, max_chars: int) -> str:
     words = str(text).split()
     lines = []
@@ -371,6 +421,8 @@ def wrap_text(text: str, max_chars: int) -> str:
     if current:
         lines.append(current)
     return "\n".join(lines)
+
+
 def generate_fallback_meme(
     worst_case: str, company: str, savage: bool = False
 ) -> Optional[bytes]:
@@ -418,6 +470,8 @@ def generate_fallback_meme(
     buffer = io.BytesIO()
     img.save(buffer, format="PNG")
     return buffer.getvalue()
+
+
 @st.cache_data(show_spinner=False)
 def generate_threat_meme(
     worst_case: str, company: str, savage: bool = False
@@ -481,6 +535,8 @@ SVG starts with <svg and ends with </svg>
     except Exception as e:
         st.info(f"ℹ️ Meme generation issue: {e} — Using local fallback.")
         return generate_fallback_meme(worst_case, company, savage=savage)
+
+
 def render_result(entry: dict, savage_mode: bool):
     data = entry["data"]
     company = entry.get("company", "Unknown")
@@ -585,7 +641,7 @@ def render_result(entry: dict, savage_mode: bool):
     )
     gen_col, _ = st.columns([1, 3])
     with gen_col:
-        meme_btn = st.button("🎨 VISUALIZE THREAT", width="stretch")
+        meme_btn = st.button("🎨 VISUALIZE THREAT", use_container_width=True)
     if meme_btn:
         with st.spinner(
             "Generating savage cyberpunk threat poster..."
@@ -641,8 +697,12 @@ def render_result(entry: dict, savage_mode: bool):
                     mime="image/png",
                 )
             else:
-                st.warning("⚠️ High-quality poster generation failed. Displaying raw SVG data.")
+                st.warning(
+                    "⚠️ High-quality poster generation failed. Displaying raw SVG data."
+                )
                 st.code(svg_data, language="xml")
+
+
 def render_compare_results(compare_data: dict, savage_mode: bool):
     metaA = compare_data["metaA"]
     metaB = compare_data["metaB"]
@@ -734,6 +794,8 @@ def render_compare_results(compare_data: dict, savage_mode: bool):
 """,
                 unsafe_allow_html=True,
             )
+
+
 with st.sidebar:
     st.markdown(
         """
@@ -777,7 +839,7 @@ with st.sidebar:
 """,
         unsafe_allow_html=True,
     )
-    if st.button("🗑️ CLEAR ARCHIVES", width="stretch"):
+    if st.button("🗑️ CLEAR ARCHIVES", use_container_width=True):
         st.session_state.archives = []
         st.session_state.last_analysis = None
         st.session_state.last_compare = None
@@ -811,17 +873,22 @@ with st.sidebar:
             data=report_text,
             file_name="tos_ic_report.txt",
             mime="text/plain",
-            width="stretch",
+            use_container_width=True,
         )
     st.divider()
     st.markdown(
         '<div style="font-size:11px;color:#484f58;font-weight:900;letter-spacing:2px;margin-bottom:12px;">API SETTINGS</div>',
         unsafe_allow_html=True,
     )
-    if not GEMINI_API_KEY:
+    if not get_api_key():
         st.warning("⚠️ API Key not configured.")
     else:
         st.success("✅ API ready.")
+    
+    # DEBUG: Help identify deployment key-loading issues
+    with st.expander("🛠️ Debug Info", expanded=False):
+        st.write("DEBUG KEY:", bool(get_api_key()))
+        st.write("DEBUG CLIENT:", get_client() is not None)
 if nav == "🎯 ANALYZE":
     st.markdown(
         '<div class="page-title">Analysis <span>Engine</span></div>',
@@ -848,7 +915,7 @@ if nav == "🎯 ANALYZE":
             if st.button(
                 f"{active_prefix}{label}",
                 key=f"mode_{value}",
-                width="stretch",
+                use_container_width=True,
             ):
                 st.session_state.input_mode = value
                 st.rerun()
@@ -882,7 +949,7 @@ if nav == "🎯 ANALYZE":
             )
         run_col, hint_col = st.columns([1, 4])
         with run_col:
-            run_btn = st.button("🚀 RUN AUDIT", width="stretch")
+            run_btn = st.button("🚀 RUN AUDIT", use_container_width=True)
         with hint_col:
             if savage_mode:
                 st.markdown(
@@ -895,7 +962,7 @@ if nav == "🎯 ANALYZE":
                     unsafe_allow_html=True,
                 )
     if run_btn:
-        if not GEMINI_API_KEY:
+        if not get_api_key():
             st.error("❌ API key missing. Configure it in Streamlit Secrets.")
             st.stop()
         if not check_rate_limit():
@@ -959,9 +1026,9 @@ elif nav == "⚔️ COMPARE":
         '<div class="page-sub">Compare two apps and find out which one treats your privacy like a clearance sale.</div>',
         unsafe_allow_html=True,
     )
-    if not GEMINI_API_KEY:
+    if not get_api_key():
         st.warning(
-            "⚠️ GEMINI_API_KEY missing. Configure it in Streamlit Secrets before running comparison."
+            "⚠️ API key missing. Configure it in Streamlit Secrets before running comparison."
         )
     with st.container(border=True):
         cA, cBtn, cB = st.columns([4, 2, 4])
@@ -978,7 +1045,7 @@ elif nav == "⚔️ COMPARE":
             )
         with cBtn:
             st.markdown("<br><br>", unsafe_allow_html=True)
-            compare_btn = st.button("⚔️ COMPARE", width="stretch")
+            compare_btn = st.button("⚔️ COMPARE", use_container_width=True)
         with cB:
             st.markdown(
                 '<div style="font-size:11px;color:#8b949e;font-weight:900;letter-spacing:1px;margin-bottom:6px;">TARGET BETA</div>',
@@ -991,7 +1058,7 @@ elif nav == "⚔️ COMPARE":
                 height=145,
             )
     if compare_btn:
-        if not GEMINI_API_KEY:
+        if not get_api_key():
             st.error("❌ API key missing. Configure it in Streamlit Secrets.")
             st.stop()
         if not check_rate_limit():
@@ -1003,8 +1070,14 @@ elif nav == "⚔️ COMPARE":
             try:
                 valA = inputA.strip()
                 valB = inputB.strip()
-                is_url_a = bool(urlparse(valA).scheme or ("." in valA and "/" not in valA.split(".")[0]))
-                is_url_b = bool(urlparse(valB).scheme or ("." in valB and "/" not in valB.split(".")[0]))
+                is_url_a = bool(
+                    urlparse(valA).scheme
+                    or ("." in valA and "/" not in valA.split(".")[0])
+                )
+                is_url_b = bool(
+                    urlparse(valB).scheme
+                    or ("." in valB and "/" not in valB.split(".")[0])
+                )
                 metaA = (
                     get_company_meta_from_url(valA)
                     if is_url_a
