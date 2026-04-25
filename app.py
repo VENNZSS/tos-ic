@@ -79,16 +79,20 @@ for key, value in defaults.items():
 
 # Bulletproof Key Fetching
 def get_api_key():
-    return st.session_state.get("custom_api_key") or st.secrets.get("GEMINI_API_KEY") or os.getenv("GEMINI_API_KEY")
+    return (
+        st.session_state.get("custom_api_key")
+        or st.secrets.get("GEMINI_API_KEY")
+        or os.getenv("GEMINI_API_KEY")
+    )
 
 
 def get_client():
     # 1. Get key from sidebar, secrets, or env
     key = get_api_key()
-    
+
     if not key:
         return None
-        
+
     try:
         # 2. Try the new SDK initialization
         return genai.Client(api_key=key)
@@ -96,6 +100,7 @@ def get_client():
         # 3. If it fails, show the EXACT error from Google
         st.error(f"❌ Initialization Error: {str(e)}")
         return None
+
 
 # Global client instance
 client = get_client()
@@ -233,6 +238,9 @@ def get_company_name_from_text(text: str) -> str:
         res = c.models.generate_content(
             model="gemini-2.0-flash",
             contents=f"Extract the company name from this text. Return ONLY the name (max 3 words). If unknown, return 'Unknown Company'.\n\nTEXT:\n{text[:2000]}",
+            config=types.GenerateContentConfig(
+                http_options=types.HttpOptions(timeout=30000),
+            ),
         )
         name = res.text.strip().strip('"').strip("'")
         if not name or len(name) > 40 or "\n" in name:
@@ -381,14 +389,14 @@ LEGAL TEXT:
 {text[:12000]}
 """
     res = c.models.generate_content(
-        model="gemini-2.5-flash",
+        model="gemini-2.0-flash",
         contents=prompt,
         config=types.GenerateContentConfig(
             response_mime_type="application/json",
             temperature=0.55 if savage else 0.25,
             max_output_tokens=2048,
+            http_options=types.HttpOptions(timeout=60000),
         ),
-        timeout=30,
     )
     if not res.text:
         raise ValueError("Empty response from AI")
@@ -512,9 +520,11 @@ SVG starts with <svg and ends with </svg>
         if not c:
             raise RuntimeError("API Key missing.")
         res = c.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-2.0-flash",
             contents=prompt,
-            timeout=30,
+            config=types.GenerateContentConfig(
+                http_options=types.HttpOptions(timeout=60000),
+            ),
         )
         raw = res.text or ""
         svg_match = re.search(r"<svg[^>]*>.*?</svg>", raw, re.DOTALL | re.IGNORECASE)
@@ -894,7 +904,7 @@ with st.sidebar:
         st.warning("⚠️ API Key not configured.")
     else:
         st.success("✅ API ready.")
-    
+
     # DEBUG: Help identify deployment key-loading issues
     with st.expander("🛠️ Debug Info", expanded=False):
         st.write("DEBUG KEY:", bool(get_api_key()))
