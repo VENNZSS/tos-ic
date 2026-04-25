@@ -13,6 +13,12 @@ h1, h2, h3, h4, .page-title, .section-title, .sidebar-title, .savage-panel-title
     color: #A1A1AA;
 }
 
+/* Hide Streamlit header and footer */
+[data-testid="stHeader"], [data-testid="stFooter"], #MainMenu, footer, header {
+    display: none !important;
+    visibility: hidden !important;
+}
+
 [data-testid="stSidebar"] {
     background: #09090B !important;
     border-right: 1px solid #27272A;

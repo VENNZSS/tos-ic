@@ -46,6 +46,13 @@ load_dotenv()
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
+# Fallback to streamlit secrets if not in env
+if not GEMINI_API_KEY:
+    try:
+        GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY")
+    except Exception:
+        pass
+
 try:
     client = genai.Client(
         api_key=GEMINI_API_KEY,
@@ -72,11 +79,35 @@ defaults = {
     "last_compare": None,
     "last_meme": None,
     "input_mode": "Text",
+    "custom_api_key": "",
 }
 
 for key, value in defaults.items():
     if key not in st.session_state:
         st.session_state[key] = value
+
+
+def get_api_key():
+    return st.session_state.get("custom_api_key") or GEMINI_API_KEY
+
+
+def get_client():
+    key = get_api_key()
+    if not key:
+        return None
+    try:
+        return genai.Client(
+            api_key=key,
+            http_options=types.HttpOptions(
+                retry_options=types.HttpRetryOptions(
+                    attempts=3,
+                    initial_delay=2.0,
+                    http_status_codes=[503],
+                )
+            ),
+        )
+    except Exception:
+        return genai.Client(api_key=key)
 
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
@@ -163,6 +194,10 @@ def get_company_meta_from_url(url: str) -> dict:
 
 @st.cache_data(show_spinner=False)
 def get_company_name_from_text(text: str) -> str:
+    c = get_client()
+    if not c:
+        return "Unknown Company"
+
     try:
         prompt = f"""
 What company's Terms of Service or Privacy Policy is this?
@@ -173,7 +208,7 @@ If you cannot determine it, return "Unknown Company".
 TEXT:
 {text[:2500]}
 """
-        res = client.models.generate_content(
+        res = c.models.generate_content(
             model="gemini-2.5-flash",
             contents=prompt,
         )
@@ -281,8 +316,9 @@ def fun_stats(score: int) -> dict:
 
 @st.cache_data(show_spinner=False)
 def analyze_legal(text: str, is_compare: bool = False, savage: bool = False) -> dict:
-    if not GEMINI_API_KEY:
-        raise RuntimeError("Missing GEMINI_API_KEY in .env file.")
+    c = get_client()
+    if not c:
+        raise RuntimeError("API Key missing. Add it to .env or the sidebar.")
 
     flag_format = '"red_flags": [{"title":"...","severity":"Critical|High Risk|Medium Risk","meaning":"...","worst_case":"...","savage_explanation":"..."}]'
 
@@ -338,7 +374,7 @@ LEGAL TEXT:
 {text[:9000]}
 """
 
-    res = client.models.generate_content(
+    res = c.models.generate_content(
         model="gemini-2.5-flash",
         contents=prompt,
         config=types.GenerateContentConfig(
@@ -489,7 +525,11 @@ Requirements:
 SVG starts with <svg and ends with </svg>
 """
 
-        res = client.models.generate_content(
+        c = get_client()
+        if not c:
+            raise RuntimeError("API Key missing.")
+
+        res = c.models.generate_content(
             model="gemini-2.5-flash",
             contents=prompt,
         )
@@ -893,6 +933,19 @@ with st.sidebar:
             width="stretch",
         )
 
+    st.divider()
+    st.markdown(
+        '<div style="font-size:11px;color:#484f58;font-weight:900;letter-spacing:2px;margin-bottom:12px;">API SETTINGS</div>',
+        unsafe_allow_html=True,
+    )
+    st.text_input(
+        "Gemini API Key",
+        key="custom_api_key",
+        type="password",
+        placeholder="Paste AIZA... key",
+        help="If provided, this key will be used instead of the system default."
+    )
+
 if nav == "🎯 ANALYZE":
     st.markdown(
         '<div class="page-title">Analysis <span>Engine</span></div>',
@@ -903,9 +956,9 @@ if nav == "🎯 ANALYZE":
         unsafe_allow_html=True,
     )
 
-    if not GEMINI_API_KEY:
+    if not get_api_key():
         st.warning(
-            "⚠️ GEMINI_API_KEY missing. Add it to your .env file before running analysis."
+            "⚠️ GEMINI_API_KEY missing. Add it to your .env file (local) or Streamlit Secrets (cloud) before running analysis."
         )
 
     st.markdown('<div class="input-mode-card">', unsafe_allow_html=True)
@@ -1055,9 +1108,9 @@ elif nav == "⚔️ COMPARE":
         unsafe_allow_html=True,
     )
 
-    if not GEMINI_API_KEY:
+    if not get_api_key():
         st.warning(
-            "⚠️ GEMINI_API_KEY missing. Add it to your .env file before running comparison."
+            "⚠️ GEMINI_API_KEY missing. Add it to your .env file (local) or Streamlit Secrets (cloud) before running comparison."
         )
 
     with st.container(border=True):
