@@ -77,16 +77,28 @@ for key, value in defaults.items():
         st.session_state[key] = value
 
 
+# Bulletproof Key Fetching
 def get_api_key():
-    return st.secrets.get("GEMINI_API_KEY") or os.getenv("GEMINI_API_KEY")
+    return st.session_state.get("custom_api_key") or st.secrets.get("GEMINI_API_KEY") or os.getenv("GEMINI_API_KEY")
 
 
-@st.cache_resource
 def get_client():
-    api_key = get_api_key()
-    if not api_key:
+    # 1. Get key from sidebar, secrets, or env
+    key = get_api_key()
+    
+    if not key:
         return None
-    return genai.Client(api_key=api_key)
+        
+    try:
+        # 2. Try the new SDK initialization
+        return genai.Client(api_key=key)
+    except Exception as e:
+        # 3. If it fails, show the EXACT error from Google
+        st.error(f"❌ Initialization Error: {str(e)}")
+        return None
+
+# Global client instance
+client = get_client()
 
 
 def check_rate_limit():
@@ -319,11 +331,9 @@ def fun_stats(score: int) -> dict:
 
 @st.cache_data(show_spinner=False)
 def analyze_legal(text: str, is_compare: bool = False, savage: bool = False) -> dict:
-    if not get_api_key():
-        raise RuntimeError("API Key missing. Configure it in Streamlit Secrets.")
-    c = get_client()
+    c = client or get_client()
     if not c:
-        raise RuntimeError("AI Client failed to initialize.")
+        raise RuntimeError("API Key missing or invalid. Check the sidebar debug info.")
     flag_format = '"red_flags": [{"title":"...","severity":"Critical|High Risk|Medium Risk","meaning":"...","worst_case":"...","savage_explanation":"..."}]'
     tone_rules = """
 NORMAL MODE:
