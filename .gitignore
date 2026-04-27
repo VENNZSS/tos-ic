@@ -1,8 +1,34 @@
+# Virtual environment
 venv/
+.env
+
+# Python artifacts
 __pycache__/
 *.pyc
-.env
-.DS_Store
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
 *.egg-info/
 .ruff_cache/
+.pytest_cache/
+.mypy_cache/
+
+# Local data / Generated files
+scan_history.json
 video_script.md
+images_video/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS related
+.DS_Store
+Thumbs.db
