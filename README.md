@@ -49,6 +49,12 @@ Built with Streamlit and the Gemini API, it cuts through the legal jargon to hig
   - Policies across companies
 - Highlights changes, regressions, and risk differences
 
+## 🗺️ Upcoming Features (Roadmap)
+
+- [ ] **Browser Extension:** Scan ToS directly while signing up on a website.
+- [ ] **Dark Patterns Detector:** Identify tricky UI elements designed to mislead.
+- [ ] **Multi-Language Support:** Scan legal documents in other languages.
+
 ---
 
 # ⚙️ PREREQUISITES
