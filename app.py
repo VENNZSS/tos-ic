@@ -700,53 +700,21 @@ def render_result(entry: dict, savage_mode: bool):
                 savage=savage_mode,
             )
     if st.session_state.last_meme:
+        png_data = st.session_state.last_meme
         company = entry.get("company", "Unknown")
-        svg_data = st.session_state.last_meme
-        render_fallback = False
-        if HAS_CAIROSVG:
-            try:
-                png_data = cairosvg.svg2png(bytestring=svg_data.encode("utf-8"))
-                st.markdown('<div class="meme-box">', unsafe_allow_html=True)
-                st.image(png_data, use_container_width=True)
-                st.markdown(
-                    f'<div class="meme-caption">⚠️ AI-generated satirical threat visualization · {esc(company)} · TOS-IC</div>',
-                    unsafe_allow_html=True,
-                )
-                st.markdown("</div>", unsafe_allow_html=True)
-                st.download_button(
-                    "💾 DOWNLOAD POSTER (PNG)",
-                    png_data,
-                    file_name=f"tos_ic_{company.lower().replace(' ', '_')}.png",
-                    mime="image/png",
-                )
-            except Exception as e:
-                print(f"DEBUG: SVG conversion failed: {e}")
-                render_fallback = True
-        else:
-            render_fallback = True
-        if render_fallback:
-            fallback_png = generate_fallback_meme(
-                entry["data"].get("summary", ""), company, savage_mode
-            )
-            if fallback_png:
-                st.markdown('<div class="meme-box">', unsafe_allow_html=True)
-                st.image(fallback_png, use_container_width=True)
-                st.markdown(
-                    f'<div class="meme-caption">⚠️ AI-generated summary poster · {esc(company)} · TOS-IC</div>',
-                    unsafe_allow_html=True,
-                )
-                st.markdown("</div>", unsafe_allow_html=True)
-                st.download_button(
-                    "💾 DOWNLOAD POSTER (PNG)",
-                    fallback_png,
-                    file_name=f"tos_ic_{company.lower().replace(' ', '_')}.png",
-                    mime="image/png",
-                )
-            else:
-                st.warning(
-                    "⚠️ High-quality poster generation failed. Displaying raw SVG data."
-                )
-                st.code(svg_data, language="xml")
+        st.markdown('<div class="meme-box">', unsafe_allow_html=True)
+        st.image(png_data, use_container_width=True)
+        st.markdown(
+            f'<div class="meme-caption">⚠️ AI-generated satirical threat visualization · {esc(company)} · TOS-IC</div>',
+            unsafe_allow_html=True,
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
+        st.download_button(
+            "💾 DOWNLOAD POSTER (PNG)",
+            png_data,
+            file_name=f"tos_ic_{company.lower().replace(' ', '_')}.png",
+            mime="image/png",
+        )
 
 
 def render_compare_results(compare_data: dict, savage_mode: bool):
