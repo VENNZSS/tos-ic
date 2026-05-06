@@ -935,7 +935,7 @@ with st.sidebar:
             "SELECT MODEL",
             options=available_models,
             index=0,
-            help="Using prioritized Theta-class model."
+            help="Using prioritized Theta-class model.",
         )
 
     # DEBUG: Help identify deployment key-loading issues

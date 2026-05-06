@@ -1,1 +1,182 @@
-[{"data": {"company_name": "Snowflake Inc.", "risk_score": 85, "rating": "Critical", "summary": "Snowflake can change rules, use your content, and forces arbitration.", "savage_take": "These terms ensure Snowflake can play by its own rules, monetize your genius, and silence your complaints, all while you just keep building.", "red_flags": [{"title": "Forced Arbitration", "severity": "Critical", "meaning": "If you have a problem with the company, you can't sue them in court; you have to go through a private arbitration process instead.", "worst_case": "You have a serious dispute with Snowflake (e.g., they misuse your data or content), but you're forced into a private, potentially biased arbitration system where you have less legal protection and cannot join class-action lawsuits.", "savage_explanation": "Translation: Forget your day in court, peasant! We'll settle things behind closed doors, where our chances are much better."}, {"title": "Unilateral Terms & Service Changes", "severity": "High Risk", "meaning": "The company can change the rules or even shut down parts of the service whenever they want, without telling you beforehand.", "worst_case": "You've built an entire application on Streamlit, and suddenly they change a crucial term or remove a key feature without warning, making your app unusable and costing you time/money, with no recourse.", "savage_explanation": "Translation: They can change the rules mid-game and still act shocked when you complain, and if they decide to pull the plug on your favorite feature, tough luck!"}, {"title": "Broad Perpetual Content License", "severity": "High Risk", "meaning": "When you put your content on their platform, you give them a permanent, worldwide right to use, copy, change, and sell your content, even letting others use it, without paying you.", "worst_case": "You upload a brilliant, original app or component, and Snowflake (or someone they sublicense it to) uses your idea or code to create their own commercial product, and you get no credit or compensation.", "savage_explanation": "Translation: Your amazing creations? They're basically ours now, forever, to do whatever we want with, and you get exactly zero for it. Don't worry, we'll make sure to 'develop, improve, and support' our *own* products with it."}]}, "company": "Streamlit", "logo": "https://logo.clearbit.com/streamlit.io", "type": "Compare", "timestamp": "03:17 \u00b7 Apr 26"}, {"data": {"company_name": "Brave", "risk_score": 90, "rating": "Critical", "summary": "This explains how Terms of Service are legal agreements mostly protecting companies, often with hidden user risks.", "savage_take": "Translation: these are the rules companies write to cover their butts, and you just sign away your rights without reading.", "red_flags": [{"title": "Account Termination for Any Reason", "severity": "Critical", "meaning": "The company can stop you from using their service whenever they want, even if you haven't done anything wrong.", "worst_case": "You lose access to your account, data, or paid services without warning or cause, and you can't do anything about it.", "savage_explanation": "Translation: they can kick you out of their digital club just because they feel like it, and you're left holding the bag."}, {"title": "Company Not Responsible for Problems", "severity": "High Risk", "meaning": "If something goes wrong with the service or content, the company says it's not their fault and you can't sue them.", "worst_case": "A critical service failure or data loss occurs, causing you significant harm, but the company legally avoids any responsibility.", "savage_explanation": "Translation: if their service breaks your stuff or messes up your life, they've already got their 'not my problem' card stamped and approved."}, {"title": "Terms Can Change Without Your Knowledge", "severity": "High Risk", "meaning": "The company can change the rules at any time, and you might not even know about it unless you constantly re-read their terms.", "worst_case": "You unknowingly violate new terms or lose rights because the company changed the agreement without directly telling you.", "savage_explanation": "Translation: they can change the rules mid-game and still act shocked when you complain, because 'you should have checked the fine print, peasant!'"}]}, "company": "Brave", "logo": "https://logo.clearbit.com/brave.com", "type": "Compare", "timestamp": "03:17 \u00b7 Apr 26"}, {"data": {"company_name": "Meta Platforms, Inc.", "risk_score": 95, "rating": "Critical", "summary": "Meta uses vast data for ads, can ban you permanently, and shares data with broad discretion.", "savage_take": "Welcome to Meta, where your data is currency, your actions are constantly monitored, and your digital existence is entirely at their 'sole discretion'!", "red_flags": [{"title": "Extensive Data Collection for Personalization & Ads", "severity": "High Risk", "meaning": "Meta collects almost everything you do on and off their apps and websites to build a profile and show you ads.", "worst_case": "Your entire online behavior, preferences, and connections are used to target you with ads, potentially exposing sensitive interests or influencing your choices.", "savage_explanation": "They're not *selling* your data, they're just using every crumb of your digital life to perfectly curate ads, which is totally different, right? Like a digital stalker who just wants to show you shoes."}, {"title": "Broad Discretion for Account Actions & Data Sharing", "severity": "Critical", "meaning": "Meta can decide to remove your content, block your account, or share your data with authorities or other Meta companies if they think you've done something wrong or if the law might require it.", "worst_case": "Your account is permanently disabled, content deleted, and your data shared with law enforcement or other powerful entities based on Meta's internal assessment, with no clear external review process.", "savage_explanation": "Translation: 'We're the judge, jury, and executioner of your digital life, and we'll share your info with whoever we want if we get a 'good faith' feeling about it. Don't worry, it's for *your* safety!'"}, {"title": "Permanent Account Disablement & Ban on New Accounts", "severity": "High Risk", "meaning": "If Meta bans you, you're permanently locked out of their services unless they, at their sole discretion, decide to let you back in.", "worst_case": "A minor violation (or even a mistaken one) leads to a permanent ban from Facebook, Messenger, and potentially other Meta products, with no guaranteed path to appeal or return.", "savage_explanation": "Break a rule, even accidentally, and you're not just out, you're *permanently excommunicated* from the Meta-verse, unless they grant you a royal pardon. Good luck with that!"}]}, "company": "Meta Platforms, Inc.", "logo": "", "type": "Text", "timestamp": "03:13 \u00b7 Apr 26"}, {"data": {"company_name": "General Explanation of Terms of Service", "risk_score": 90, "rating": "Critical", "summary": "ToS: Provider rules you must agree to, protecting them from you.", "savage_take": "It's a one-sided contract designed to protect the provider from you, not the other way around.", "red_flags": [{"title": "Unilateral Changes to Terms", "severity": "Critical", "meaning": "The company can change the rules of the service whenever they want, and they don't always have to tell you directly.", "worst_case": "They can add a new rule that lets them use your personal content for advertising, and you'd only know if you constantly re-read the entire document.", "savage_explanation": "Translation: they can change the rules mid-game and still act shocked when you complain."}, {"title": "Termination for Any Reason", "severity": "Critical", "meaning": "The company can stop you from using their service, delete your account, or block you whenever they want, even if you haven't broken any specific rules.", "worst_case": "Your account, which holds years of photos and messages, is suddenly deleted without warning or explanation, and you lose everything.", "savage_explanation": "They can kick you out of their digital playground just because they don't like your digital shoes, no refunds!"}, {"title": "Limitation of Liability", "severity": "High Risk", "meaning": "If something goes wrong with the service, like it breaks or gives you bad information, the company says it's not their fault.", "worst_case": "The service has a major glitch that causes you significant financial loss, but you can't sue them because their ToS says they're not responsible.", "savage_explanation": "So, if their service breaks everything, they're basically saying 'oops, not our problem, thanks for playing!'"}]}, "company": "General Explanation of Terms of Service", "logo": "", "type": "Text", "timestamp": "03:01 \u00b7 Apr 26"}, {"data": {"company_name": "Snowflake", "risk_score": 85, "rating": "Critical", "summary": "Snowflake controls your content, can change rules, and forces arbitration.", "savage_take": "They own your content, control the rules, and if you object, good luck finding a real court.", "red_flags": [{"title": "Mandatory Arbitration", "severity": "Critical", "meaning": "If you have a problem with the company, you can't sue them in a regular court; you have to go through a private process called arbitration.", "worst_case": "If Snowflake wrongs you, you lose your right to a jury trial and must argue your case in a private setting, potentially with less favorable outcomes and limited appeal options.", "savage_explanation": "Translation: Forget your day in court; any beef you have with them gets settled behind closed doors, on their terms, not yours. Your legal rights? Conveniently sidelined."}, {"title": "Unilateral Changes to Terms", "severity": "High Risk", "meaning": "The company can change these rules whenever they want, and if you keep using the service, you automatically agree to the new rules.", "worst_case": "They could add new, unfavorable rules (like charging for a previously free service or further restricting your content rights) without needing your explicit consent, and your only option is to stop using the service.", "savage_explanation": "Translation: They can change the rules mid-game and still act shocked when you complain, forcing you to play by their ever-shifting playbook."}, {"title": "Broad License to Your Content", "severity": "High Risk", "meaning": "When you upload your content, you give the company a permanent, worldwide right to use, copy, change, and share it for their business, even letting others use it.", "worst_case": "Your creative work, apps, or data could be used by Snowflake or its partners in ways you didn't intend or approve, potentially for profit, without any payment or credit to you.", "savage_explanation": "Translation: Your brilliant creations? They're now their property to play with, profit from, and sublicense to anyone, forever, for free. You just provide the content."}]}, "company": "Snowflake", "logo": "", "type": "Text", "timestamp": "01:55 \u00b7 Apr 26"}]
+[
+  {
+    "data": {
+      "company_name": "Snowflake Inc.",
+      "risk_score": 85,
+      "rating": "Critical",
+      "summary": "Snowflake can change rules, use your content, and forces arbitration.",
+      "savage_take": "These terms ensure Snowflake can play by its own rules, monetize your genius, and silence your complaints, all while you just keep building.",
+      "red_flags": [
+        {
+          "title": "Forced Arbitration",
+          "severity": "Critical",
+          "meaning": "If you have a problem with the company, you can't sue them in court; you have to go through a private arbitration process instead.",
+          "worst_case": "You have a serious dispute with Snowflake (e.g., they misuse your data or content), but you're forced into a private, potentially biased arbitration system where you have less legal protection and cannot join class-action lawsuits.",
+          "savage_explanation": "Translation: Forget your day in court, peasant! We'll settle things behind closed doors, where our chances are much better."
+        },
+        {
+          "title": "Unilateral Terms & Service Changes",
+          "severity": "High Risk",
+          "meaning": "The company can change the rules or even shut down parts of the service whenever they want, without telling you beforehand.",
+          "worst_case": "You've built an entire application on Streamlit, and suddenly they change a crucial term or remove a key feature without warning, making your app unusable and costing you time/money, with no recourse.",
+          "savage_explanation": "Translation: They can change the rules mid-game and still act shocked when you complain, and if they decide to pull the plug on your favorite feature, tough luck!"
+        },
+        {
+          "title": "Broad Perpetual Content License",
+          "severity": "High Risk",
+          "meaning": "When you put your content on their platform, you give them a permanent, worldwide right to use, copy, change, and sell your content, even letting others use it, without paying you.",
+          "worst_case": "You upload a brilliant, original app or component, and Snowflake (or someone they sublicense it to) uses your idea or code to create their own commercial product, and you get no credit or compensation.",
+          "savage_explanation": "Translation: Your amazing creations? They're basically ours now, forever, to do whatever we want with, and you get exactly zero for it. Don't worry, we'll make sure to 'develop, improve, and support' our *own* products with it."
+        }
+      ]
+    },
+    "company": "Streamlit",
+    "logo": "https://logo.clearbit.com/streamlit.io",
+    "type": "Compare",
+    "timestamp": "03:17 \u00b7 Apr 26"
+  },
+  {
+    "data": {
+      "company_name": "Brave",
+      "risk_score": 90,
+      "rating": "Critical",
+      "summary": "This explains how Terms of Service are legal agreements mostly protecting companies, often with hidden user risks.",
+      "savage_take": "Translation: these are the rules companies write to cover their butts, and you just sign away your rights without reading.",
+      "red_flags": [
+        {
+          "title": "Account Termination for Any Reason",
+          "severity": "Critical",
+          "meaning": "The company can stop you from using their service whenever they want, even if you haven't done anything wrong.",
+          "worst_case": "You lose access to your account, data, or paid services without warning or cause, and you can't do anything about it.",
+          "savage_explanation": "Translation: they can kick you out of their digital club just because they feel like it, and you're left holding the bag."
+        },
+        {
+          "title": "Company Not Responsible for Problems",
+          "severity": "High Risk",
+          "meaning": "If something goes wrong with the service or content, the company says it's not their fault and you can't sue them.",
+          "worst_case": "A critical service failure or data loss occurs, causing you significant harm, but the company legally avoids any responsibility.",
+          "savage_explanation": "Translation: if their service breaks your stuff or messes up your life, they've already got their 'not my problem' card stamped and approved."
+        },
+        {
+          "title": "Terms Can Change Without Your Knowledge",
+          "severity": "High Risk",
+          "meaning": "The company can change the rules at any time, and you might not even know about it unless you constantly re-read their terms.",
+          "worst_case": "You unknowingly violate new terms or lose rights because the company changed the agreement without directly telling you.",
+          "savage_explanation": "Translation: they can change the rules mid-game and still act shocked when you complain, because 'you should have checked the fine print, peasant!'"
+        }
+      ]
+    },
+    "company": "Brave",
+    "logo": "https://logo.clearbit.com/brave.com",
+    "type": "Compare",
+    "timestamp": "03:17 \u00b7 Apr 26"
+  },
+  {
+    "data": {
+      "company_name": "Meta Platforms, Inc.",
+      "risk_score": 95,
+      "rating": "Critical",
+      "summary": "Meta uses vast data for ads, can ban you permanently, and shares data with broad discretion.",
+      "savage_take": "Welcome to Meta, where your data is currency, your actions are constantly monitored, and your digital existence is entirely at their 'sole discretion'!",
+      "red_flags": [
+        {
+          "title": "Extensive Data Collection for Personalization & Ads",
+          "severity": "High Risk",
+          "meaning": "Meta collects almost everything you do on and off their apps and websites to build a profile and show you ads.",
+          "worst_case": "Your entire online behavior, preferences, and connections are used to target you with ads, potentially exposing sensitive interests or influencing your choices.",
+          "savage_explanation": "They're not *selling* your data, they're just using every crumb of your digital life to perfectly curate ads, which is totally different, right? Like a digital stalker who just wants to show you shoes."
+        },
+        {
+          "title": "Broad Discretion for Account Actions & Data Sharing",
+          "severity": "Critical",
+          "meaning": "Meta can decide to remove your content, block your account, or share your data with authorities or other Meta companies if they think you've done something wrong or if the law might require it.",
+          "worst_case": "Your account is permanently disabled, content deleted, and your data shared with law enforcement or other powerful entities based on Meta's internal assessment, with no clear external review process.",
+          "savage_explanation": "Translation: 'We're the judge, jury, and executioner of your digital life, and we'll share your info with whoever we want if we get a 'good faith' feeling about it. Don't worry, it's for *your* safety!'"
+        },
+        {
+          "title": "Permanent Account Disablement & Ban on New Accounts",
+          "severity": "High Risk",
+          "meaning": "If Meta bans you, you're permanently locked out of their services unless they, at their sole discretion, decide to let you back in.",
+          "worst_case": "A minor violation (or even a mistaken one) leads to a permanent ban from Facebook, Messenger, and potentially other Meta products, with no guaranteed path to appeal or return.",
+          "savage_explanation": "Break a rule, even accidentally, and you're not just out, you're *permanently excommunicated* from the Meta-verse, unless they grant you a royal pardon. Good luck with that!"
+        }
+      ]
+    },
+    "company": "Meta Platforms, Inc.",
+    "logo": "",
+    "type": "Text",
+    "timestamp": "03:13 \u00b7 Apr 26"
+  },
+  {
+    "data": {
+      "company_name": "General Explanation of Terms of Service",
+      "risk_score": 90,
+      "rating": "Critical",
+      "summary": "ToS: Provider rules you must agree to, protecting them from you.",
+      "savage_take": "It's a one-sided contract designed to protect the provider from you, not the other way around.",
+      "red_flags": [
+        {
+          "title": "Unilateral Changes to Terms",
+          "severity": "Critical",
+          "meaning": "The company can change the rules of the service whenever they want, and they don't always have to tell you directly.",
+          "worst_case": "They can add a new rule that lets them use your personal content for advertising, and you'd only know if you constantly re-read the entire document.",
+          "savage_explanation": "Translation: they can change the rules mid-game and still act shocked when you complain."
+        },
+        {
+          "title": "Termination for Any Reason",
+          "severity": "Critical",
+          "meaning": "The company can stop you from using their service, delete your account, or block you whenever they want, even if you haven't broken any specific rules.",
+          "worst_case": "Your account, which holds years of photos and messages, is suddenly deleted without warning or explanation, and you lose everything.",
+          "savage_explanation": "They can kick you out of their digital playground just because they don't like your digital shoes, no refunds!"
+        },
+        {
+          "title": "Limitation of Liability",
+          "severity": "High Risk",
+          "meaning": "If something goes wrong with the service, like it breaks or gives you bad information, the company says it's not their fault.",
+          "worst_case": "The service has a major glitch that causes you significant financial loss, but you can't sue them because their ToS says they're not responsible.",
+          "savage_explanation": "So, if their service breaks everything, they're basically saying 'oops, not our problem, thanks for playing!'"
+        }
+      ]
+    },
+    "company": "General Explanation of Terms of Service",
+    "logo": "",
+    "type": "Text",
+    "timestamp": "03:01 \u00b7 Apr 26"
+  },
+  {
+    "data": {
+      "company_name": "Snowflake",
+      "risk_score": 85,
+      "rating": "Critical",
+      "summary": "Snowflake controls your content, can change rules, and forces arbitration.",
+      "savage_take": "They own your content, control the rules, and if you object, good luck finding a real court.",
+      "red_flags": [
+        {
+          "title": "Mandatory Arbitration",
+          "severity": "Critical",
+          "meaning": "If you have a problem with the company, you can't sue them in a regular court; you have to go through a private process called arbitration.",
+          "worst_case": "If Snowflake wrongs you, you lose your right to a jury trial and must argue your case in a private setting, potentially with less favorable outcomes and limited appeal options.",
+          "savage_explanation": "Translation: Forget your day in court; any beef you have with them gets settled behind closed doors, on their terms, not yours. Your legal rights? Conveniently sidelined."
+        },
+        {
+          "title": "Unilateral Changes to Terms",
+          "severity": "High Risk",
+          "meaning": "The company can change these rules whenever they want, and if you keep using the service, you automatically agree to the new rules.",
+          "worst_case": "They could add new, unfavorable rules (like charging for a previously free service or further restricting your content rights) without needing your explicit consent, and your only option is to stop using the service.",
+          "savage_explanation": "Translation: They can change the rules mid-game and still act shocked when you complain, forcing you to play by their ever-shifting playbook."
+        },
+        {
+          "title": "Broad License to Your Content",
+          "severity": "High Risk",
+          "meaning": "When you upload your content, you give the company a permanent, worldwide right to use, copy, change, and share it for their business, even letting others use it.",
+          "worst_case": "Your creative work, apps, or data could be used by Snowflake or its partners in ways you didn't intend or approve, potentially for profit, without any payment or credit to you.",
+          "savage_explanation": "Translation: Your brilliant creations? They're now their property to play with, profit from, and sublicense to anyone, forever, for free. You just provide the content."
+        }
+      ]
+    },
+    "company": "Snowflake",
+    "logo": "",
+    "type": "Text",
+    "timestamp": "01:55 \u00b7 Apr 26"
+  }
+]
